@@ -2,20 +2,17 @@ package com.example.jshch.daniaandroidapp;
 
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
-
-import java.util.EventListener;
 
 public class MainActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
     private Sensor mAccelerometer, mLightSensor;
     private ShakeDetector mShakeDetector;
-    private SensorEventListener mLightSensorEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,20 +31,41 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        mLightSensorEventListener =
-        if (mLightSensor == null){
-            Toast.makeText(this,"No Light Sensor!", Toast.LENGTH_LONG).show();
+        if(mLightSensor != null){
+            Toast.makeText(this,
+                    "Sensor.TYPE_LIGHT Available",
+                    Toast.LENGTH_LONG).show();
+            mSensorManager.registerListener(
+                    LightSensorListener,
+                    mLightSensor,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+
+        }else{
+
         }
-        else{
-            mSensorManager.registerListener(lightSensorEventListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    private final SensorEventListener LightSensorListener
+            = new SensorEventListener(){
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+
         }
 
-    }
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if(event.sensor.getType() == Sensor.TYPE_LIGHT){
+                //textLIGHT_reading.setText("LIGHT: " + event.values[0]);
+            }
+        }
+    };
+
     @Override
     public void onResume() {
-        super.onResume();
         // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+        super.onResume();
     }
 
     @Override
@@ -59,6 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleShakeEvent(int count) {
 
-
     }
+
 }

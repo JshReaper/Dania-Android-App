@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android Sensor App.iml" filepath="$PROJECT_DIR$/Android Sensor App.iml" />
       <module fileurl="file://C:\Users\jshch\Documents\Dania-Android-App\Android Sensor App.iml" filepath="C:\Users\jshch\Documents\Dania-Android-App\Android Sensor App.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Dania-Android-App.iml" filepath="$PROJECT_DIR$/Dania-Android-App.iml" />
       <module fileurl="file://C:\Users\xenit\Desktop\Stuff\Projects\Android Sensor App\Dania-Android-App.iml" filepath="C:\Users\xenit\Desktop\Stuff\Projects\Android Sensor App\Dania-Android-App.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\xenit\Desktop\Stuff\Projects\Android Sensor App\app\app.iml" filepath="C:\Users\xenit\Desktop\Stuff\Projects\Android Sensor App\app\app.iml" />
     </modules>
   </component>
 </project>
