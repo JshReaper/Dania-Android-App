@@ -1,13 +1,19 @@
 package com.example.jshch.daniaandroidapp;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.widget.Toast;
+
+import java.lang.reflect.Parameter;
+import java.security.Policy;
 
 public class MainActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
@@ -16,10 +22,25 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean lowLux = false;
 
+    Context context = this;
+    Camera camera;
+    Parameters p;
+    boolean hasFlash;
+    boolean flashIsOn = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        hasFlash = getApplication().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+
+        if(!hasFlash){
+            Toast.makeText(MainActivity.this, "No camera on device", Toast.LENGTH_LONG);
+        }else{
+            this.camera = Camera.open(0);
+            this.p = this.camera.getParameters();
+        }
 
         // ShakeDetector initialization
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -50,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if(event.sensor.getType() == Sensor.TYPE_LIGHT){
-                if (event.values[0] < 100) {
+                if (event.values[0] < 10) {
                     lowLux = true;
-                }else{
+                }else if (event.values[0] > 10){
                     lowLux = false;
                 }
             }
@@ -74,12 +95,23 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    protected void onStop(){
+        super.onStop();
+
+    }
+
     private void handleShakeEvent(int count) {
         if(lowLux){
-            
+            p.setFlashMode(Parameters.FLASH_MODE_TORCH);
+            camera.setParameters(p);
+            camera.startPreview();
+            flashIsOn = true;
         }
         else if(!lowLux){
-
+            p.setFlashMode(Parameters.FLASH_MODE_OFF);
+            camera.setParameters(p);
+            camera.startPreview();
+            flashIsOn = false;
         }
     }
 
