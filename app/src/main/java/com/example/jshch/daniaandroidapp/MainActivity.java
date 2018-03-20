@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private Sensor mAccelerometer, mLightSensor;
     private ShakeDetector mShakeDetector;
 
+    private boolean lowLux = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if(mLightSensor != null){
-            Toast.makeText(this,
-                    "Sensor.TYPE_LIGHT Available",
-                    Toast.LENGTH_LONG).show();
-            mSensorManager.registerListener(
-                    LightSensorListener,
-                    mLightSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-
-        }else{
-
+            Toast.makeText(this, "Sensor.TYPE_LIGHT Available", Toast.LENGTH_LONG).show();
+            mSensorManager.registerListener(LightSensorListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
@@ -56,7 +50,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if(event.sensor.getType() == Sensor.TYPE_LIGHT){
-                //textLIGHT_reading.setText("LIGHT: " + event.values[0]);
+                if (event.values[0] < 100) {
+                    lowLux = true;
+                }else{
+                    lowLux = false;
+                }
             }
         }
     };
@@ -65,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(LightSensorListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
     }
 
@@ -76,7 +75,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleShakeEvent(int count) {
+        if(lowLux){
+            
+        }
+        else if(!lowLux){
 
+        }
     }
 
 }
