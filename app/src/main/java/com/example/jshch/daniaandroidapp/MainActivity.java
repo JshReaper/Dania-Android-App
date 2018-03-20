@@ -3,6 +3,8 @@ package com.example.jshch.daniaandroidapp;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,22 +18,18 @@ import java.lang.reflect.Parameter;
 import java.security.Policy;
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    ListView listView ;
-    SensorManager sensorManager ;
-    List<Sensor> listsensor;
-    List<String> liststring ;
-    ArrayAdapter<String> adapter ;
     private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
+    private Sensor mAccelerometer, mLightSensor;
     private ShakeDetector mShakeDetector;
+
     Context context = this;
     Camera camera;
     Parameters p;
     boolean hasFlash;
     boolean flashIsOn = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,24 +50,48 @@ public class MainActivity extends AppCompatActivity {
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mShakeDetector = new ShakeDetector();
         mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-
             @Override
             public void onShake(int count) {
-				/*
-				 * The following method, "handleShakeEvent(count):" is a stub //
-				 * method you would use to setup whatever you want done once the
-				 * device has been shook.
-				 */
-
                 handleShakeEvent(count);
             }
         });
+
+        mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if(mLightSensor != null){
+            Toast.makeText(this,
+                    "Sensor.TYPE_LIGHT Available",
+                    Toast.LENGTH_LONG).show();
+            mSensorManager.registerListener(
+                    LightSensorListener,
+                    mLightSensor,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+
+        }else{
+
+        }
     }
+
+    private final SensorEventListener LightSensorListener
+            = new SensorEventListener(){
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if(event.sensor.getType() == Sensor.TYPE_LIGHT){
+                //textLIGHT_reading.setText("LIGHT: " + event.values[0]);
+            }
+        }
+    };
+
     @Override
     public void onResume() {
-        super.onResume();
         // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+        super.onResume();
     }
 
     @Override
@@ -78,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         mSensorManager.unregisterListener(mShakeDetector);
         super.onPause();
     }
+
     protected void onStop(){
         super.onStop();
 
@@ -101,6 +124,5 @@ public class MainActivity extends AppCompatActivity {
             flashIsOn = false;
         }
     }
-
 
 }
