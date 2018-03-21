@@ -112,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleShakeEvent(int count) {
-        if(lowLux){
+        if(lowLux && !flashIsOn){
             p.setFlashMode(Parameters.FLASH_MODE_TORCH);
             camera.setParameters(p);
             camera.startPreview();
             flashIsOn = true;
         }
-        else if(!lowLux){
+        else if(flashIsOn){
             p.setFlashMode(Parameters.FLASH_MODE_OFF);
             camera.setParameters(p);
             camera.startPreview();
