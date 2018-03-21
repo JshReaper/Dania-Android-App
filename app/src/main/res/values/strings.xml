@@ -2,5 +2,5 @@
     <string name="app_name">Shake it on</string>
     <string name="service_toggle">Toggle service</string>
     <string name="welcome_message">Welcome to Shake it on!</string>
-    <string name="explanation">Toggle the app on and anytime you shake your device, the flashlight will toggle On/Off.</string>
+    <string name="explanation">Shake your device whenever it\'s dark to toggle the flashlight.</string>
 </resources>
