@@ -36,28 +36,20 @@ public class FlashService extends Service {
     MainActivity main;
 
 
-    public FlashService(MainActivity main) {
-        this.main = main;
+    public FlashService() {
+
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(main, new String[] {Manifest.permission.CAMERA}, 4);
 
-        }
-        while (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED){
-
-        }
         hasFlash = getApplication().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
         if(!hasFlash){
-            Toast.makeText(main, "No camera on device", Toast.LENGTH_LONG);
+            Toast.makeText(this, "No camera on device", Toast.LENGTH_LONG);
         }else{
-            Toast.makeText(main, "Camera detected", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Camera detected", Toast.LENGTH_LONG);
             this.camera = Camera.open(0);
             this.p = this.camera.getParameters();
         }
@@ -126,12 +118,16 @@ public class FlashService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
     @Override
     public void onDestroy() {
+        mSensorManager.unregisterListener(mShakeDetector);
+        mSensorManager.unregisterListener(LightSensorListener);
+        p.setFlashMode(Parameters.FLASH_MODE_OFF);
+        camera.setParameters(p);
+        camera.startPreview();
         super.onDestroy();
 
     }
