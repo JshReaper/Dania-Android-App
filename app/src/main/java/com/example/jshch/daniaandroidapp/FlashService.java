@@ -36,8 +36,8 @@ public class FlashService extends Service {
     MainActivity main;
 
 
-    public FlashService(MainActivity main) {
-        this.main = main;
+    public FlashService() {
+
     }
 
     @Override
@@ -120,6 +120,8 @@ public class FlashService extends Service {
 // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(LightSensorListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        Bundle extras = intent.getExtras();
+        main = (MainActivity) extras.get("MAIN");
         return super.onStartCommand(intent, flags, startId);
 
     }
