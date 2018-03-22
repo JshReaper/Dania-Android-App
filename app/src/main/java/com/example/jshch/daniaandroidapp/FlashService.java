@@ -1,17 +1,12 @@
 package com.example.jshch.daniaandroidapp;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.content.Context;
@@ -19,7 +14,7 @@ import android.content.pm.PackageManager;
 import android.widget.Toast;
 
 
-
+//This the the flashlight service class, this service makes the flashlight app work even when not in focus
 public class FlashService extends Service {
     private SensorManager mSensorManager;
     private Sensor mAccelerometer, mLightSensor;
@@ -28,13 +23,13 @@ public class FlashService extends Service {
 
     private boolean lowLux = false;
 
+    //This is the objects used to control the camera and it's flashlight.
     Context context = this;
     Camera camera;
     Parameters p;
+    //Booleans to check if the light is on and to set availability.
     boolean hasFlash;
     boolean flashIsOn = false;
-    MainActivity main;
-
 
     public FlashService() {
 
@@ -44,8 +39,11 @@ public class FlashService extends Service {
     public void onCreate() {
         super.onCreate();
 
+
+        //Set a boolean to the camera availability to check it later.
         hasFlash = getApplication().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
+        //Check if the phone has a camera attachec through the hardware
         if(!hasFlash){
             Toast.makeText(this, "No camera on device", Toast.LENGTH_LONG);
         }else{
@@ -94,12 +92,18 @@ public class FlashService extends Service {
 
     private void handleShakeEvent(int count) {
         if(lowLux && !flashIsOn){
+            //turn the flashlight on with the torch mode
+            //this method is old and should ideally not be used as there has been made a new
+            //class for this, however to support devices from older vertions of android we had to use this
             p.setFlashMode(Parameters.FLASH_MODE_TORCH);
             camera.setParameters(p);
             camera.startPreview();
             flashIsOn = true;
         }
         else if(flashIsOn){
+            //Turn the flashlight off with the off mode from parameters
+            //this method is old and should ideally not be used as there has been made a new
+            //class for this, however to support devices from older vertions of android we had to use this
             p.setFlashMode(Parameters.FLASH_MODE_OFF);
             camera.setParameters(p);
             camera.startPreview();
@@ -112,8 +116,6 @@ public class FlashService extends Service {
 // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(LightSensorListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        Bundle extras = intent.getExtras();
-        main = (MainActivity) extras.get("MAIN");
         return super.onStartCommand(intent, flags, startId);
 
     }
