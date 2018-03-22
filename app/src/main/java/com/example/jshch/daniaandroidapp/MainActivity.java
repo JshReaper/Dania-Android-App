@@ -16,18 +16,20 @@ public class MainActivity extends AppCompatActivity {
     boolean active;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { //We use the onCreate to instantiate all the sensors and the button.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) //Here we "ask" permission to use the camera, this is needed after 6.0
                 == PackageManager.PERMISSION_DENIED){
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, 4);
 
         }
-        while (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        while (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) //This loop makes sure that we give permissions before the app tries to use the camera, preventing a crash.
                 == PackageManager.PERMISSION_DENIED){
 
         }
+
         active = false;
         toggleBtn = (Button)findViewById(R.id.toggleButton);
 
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     Intent serviceIntent;
-    public void ToggleService(){
+    public void ToggleService(){ //quick method to start/stop the background service together with the toggle button.
         if(!active){
             active = true;
             serviceIntent = new Intent(this, FlashService.class);
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //We don't need these since the entire app is background and written in the class "Flash service"
     @Override
     public void onResume() {
         super.onResume();
