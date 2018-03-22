@@ -132,6 +132,7 @@ public class FlashService extends Service {
         p.setFlashMode(Parameters.FLASH_MODE_OFF);
         camera.setParameters(p);
         camera.startPreview();
+        camera.release();
         super.onDestroy();
 
     }
