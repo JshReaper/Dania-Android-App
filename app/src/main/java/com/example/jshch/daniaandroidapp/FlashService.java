@@ -111,9 +111,9 @@ public class FlashService extends Service {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if(event.sensor.getType() == Sensor.TYPE_LIGHT){
-                if (event.values[0] < 10) {
+                if (event.values[0] < 5) {
                     lowLux = true;
-                }else if (event.values[0] > 10){
+                }else if (event.values[0] > 5){
                     lowLux = false;
                 }
             }
