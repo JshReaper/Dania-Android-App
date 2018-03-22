@@ -16,20 +16,22 @@ import android.widget.Toast;
 
 //This the the flashlight service class, this service makes the flashlight app work even when not in focus
 public class FlashService extends Service {
+    //Sensor classes used
     private SensorManager mSensorManager;
-    private Sensor mAccelerometer, mLightSensor;
+    private Sensor mAccelerometer, mLightSensor, mProximity;
 
+        //Custom sensor
     private ShakeDetector mShakeDetector;
 
-    private boolean lowLux = false;
+    //Fields used to control the camera and it's flashlight.
+    private Context context = this;
+    private Camera camera;
+    private Parameters p;
+    private boolean hasFlash, flashIsOn = false, lowLux = false;
 
-    //This is the objects used to control the camera and it's flashlight.
-    Context context = this;
-    Camera camera;
-    Parameters p;
-    //Booleans to check if the light is on and to set availability.
-    boolean hasFlash;
-    boolean flashIsOn = false;
+    //fields for using the proximity sensor
+    private int sensorAccuracy = 1;
+    private boolean pocket = false;
 
     public FlashService() {
 
@@ -38,7 +40,6 @@ public class FlashService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
 
         //Set a boolean to the camera availability to check it later.
         hasFlash = getApplication().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
@@ -65,10 +66,39 @@ public class FlashService extends Service {
 
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if(mLightSensor != null){
-            Toast.makeText(this, "Sensor.TYPE_LIGHT Available", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Sensor.TYPE_LIGHT Available", Toast.LENGTH_LONG).show(); //Debug
             mSensorManager.registerListener(LightSensorListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+
+        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        if (mProximity != null){
+            Toast.makeText(this, "Sensor.TYPE_Proximity Available", Toast.LENGTH_LONG).show(); //Debug
+            mSensorManager.registerListener(ProximitySensorListener, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
     }
+
+    private final SensorEventListener ProximitySensorListener
+            = new SensorEventListener(){
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if(event.sensor.getType() == Sensor.TYPE_PROXIMITY){
+                if (event.values[0] >= -sensorAccuracy && event.values[0] <= sensorAccuracy) {
+                    //near
+                    pocket = true;
+                } else {
+                    //far
+                    pocket = false;
+                }
+            }
+        }
+    };
 
     private final SensorEventListener LightSensorListener
             = new SensorEventListener(){
@@ -91,7 +121,7 @@ public class FlashService extends Service {
     };
 
     private void handleShakeEvent(int count) {
-        if(lowLux && !flashIsOn){
+        if(lowLux && !flashIsOn && !pocket){
             //turn the flashlight on with the torch mode
             //this method is old and should ideally not be used as there has been made a new
             //class for this, however to support devices from older vertions of android we had to use this
