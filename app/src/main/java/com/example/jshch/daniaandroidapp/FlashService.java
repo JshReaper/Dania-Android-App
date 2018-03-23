@@ -48,7 +48,7 @@ public class FlashService extends Service {
         if(!hasFlash){
             Toast.makeText(this, "No camera on device", Toast.LENGTH_LONG);
         }else{
-            Toast.makeText(this, "Camera detected", Toast.LENGTH_LONG);
+           // Toast.makeText(this, "Camera detected", Toast.LENGTH_LONG);
             this.camera = Camera.open(0);
             this.p = this.camera.getParameters();
         }
@@ -66,15 +66,20 @@ public class FlashService extends Service {
 
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if(mLightSensor != null){
-            Toast.makeText(this, "Sensor.TYPE_LIGHT Available", Toast.LENGTH_LONG).show(); //Debug
+            //Toast.makeText(this, "Sensor.TYPE_LIGHT Available", Toast.LENGTH_LONG).show(); //Debug
             mSensorManager.registerListener(LightSensorListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
+        else{
+            Toast.makeText(this, "Light Sensor Unavailable", Toast.LENGTH_LONG).show();
+        }
         mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         if (mProximity != null){
-            Toast.makeText(this, "Sensor.TYPE_Proximity Available", Toast.LENGTH_LONG).show(); //Debug
+          //  Toast.makeText(this, "Sensor.TYPE_Proximity Available", Toast.LENGTH_LONG).show(); //Debug
             mSensorManager.registerListener(ProximitySensorListener, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        else{
+            Toast.makeText(this, "Proximity Sensor Unavailable", Toast.LENGTH_LONG).show();
         }
 
     }
