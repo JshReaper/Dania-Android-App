@@ -37,6 +37,7 @@ public class ShakeDetector implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (mListener != null) {
+            //sets the x y and z coordinates of the sensor
             float x = sensorEvent.values[0];
             float y = sensorEvent.values[1];
             float z = sensorEvent.values[2];
@@ -62,8 +63,10 @@ public class ShakeDetector implements SensorEventListener {
                 }
 
                 mShakeTimestamp = now;
+                //counts how many times the phone have been shaked
                 mShakeCount++;
 
+                //calls the Shake method which is
                 mListener.onShake(mShakeCount);
             }}
     }
